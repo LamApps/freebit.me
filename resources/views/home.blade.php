@@ -55,7 +55,7 @@
                                                     <label for="surename"><h4 style="align-self:center; margin-top: 10px;">Your Wallet Address</h4></label>
                                                 </div>
                                                 <div class="col-sm-8">
-                                                    <input type="text" placeholder="Enter Your Wallet Address" id="wallet_address" required="" maxlength="34">
+                                                    <input type="text" placeholder="Enter Your Wallet Address" id="wallet_address" required="" maxlength="42">
                                                 </div>
                                             </div>
                                         </div>
@@ -158,7 +158,55 @@
                                     </h2>
                                     <section>
                                         <div id="finalstep">
-
+                                            <div class="col-12 alert alert-success" style="padding-top:30px;">
+                                                <h3 style="color: #0f5132;text-align: center;font-size: 35px;"><strong>Success <i class="fa fa-check" style="margin-left: 10px;"></i></strong></h3><br> Your name <mark class="text-white bg-color-primary" style="overflow-wrap: break-word;" id="domain-name-mark"></mark> will arrive at <mark class="text-white bg-color-primary" style="overflow-wrap: break-word;" id="wallet-address-mark"></mark> address in 2-4 hours.  If you enjoyed this and feel it may help others decentralize their identities, please share on Twitter, Instagram, TikTok and all other forms of social media.<span class="mx-2">-FreeBit.me</span>
+                                            </div>
+                                            <h4>How would you rate the ease with which you were able to reserve your .bit name, where 1 is Super Difficult and 10 is Super Easy?</h4>
+                                            <div class="row text-center">
+                                                <div class="form-group col">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="rate" id="rate1" value="1">
+                                                        <label class="form-check-label" for="rate1"> 1 </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="rate" id="rate2" value="2">
+                                                        <label class="form-check-label" for="rate2"> 2 </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="rate" id="rate3" value="3">
+                                                        <label class="form-check-label" for="rate3"> 3 </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="rate" id="rate4" value="4">
+                                                        <label class="form-check-label" for="rate4"> 4 </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="rate" id="rate5" value="5">
+                                                        <label class="form-check-label" for="rate5"> 5 </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="rate" id="rate6" value="6">
+                                                        <label class="form-check-label" for="rate6"> 6 </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="rate" id="rate7" value="7">
+                                                        <label class="form-check-label" for="rate7"> 7 </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="rate" id="rate8" value="8">
+                                                        <label class="form-check-label" for="rate8"> 8 </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="rate" id="rate9" value="9">
+                                                        <label class="form-check-label" for="rate9"> 9 </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="rate" id="rate10" value="10">
+                                                        <label class="form-check-label" for="rate10"> 10 </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <input type="button" class="btn btn-primary" value="SUBMIT FOR CONFIRMATION CODE" id="survey-submit-btn">
                                         </div>
                                     </section>
                                 </div>
