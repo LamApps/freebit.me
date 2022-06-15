@@ -29,6 +29,34 @@ $(function(){
         timeout = setTimeout(()=>{validateDomainName()},1000);
     });
 
+    $("#survey-submit-btn").on('click', function(){
+        var csrf = document.querySelector('meta[name="csrf-token"]').content;
+        var checked = $("input[name=rate]:checked").val();
+        var wallet_address = $('#wallet_address').val();
+        var domainName = $('#request_domainName').val();
+        var twitterUserName = $('#twitterUserName').val().replace(/@/g, '');
+        if(checked){
+            $.post("/finalization",
+            {
+                _token: csrf,
+                walletAddress : wallet_address,
+                domainName: domainName,
+                twitterUserName: twitterUserName,
+                survey: checked,
+            }).done(function(data){
+                if(data.status){
+                    swal("CONFIRMATION CODE: "+data.payload, "Please save this code in a safe area for some later use.");  
+                }else{
+                    swal("Oop!", data.payload);  
+                }
+            }).fail(function(err){
+                swal("Oops!", err.responseJSON.message);  
+            });
+        }else{
+            swal("Oops!", "Please select one option!");  
+        }
+    })
+
 });
 function validateDomainName(){
     var domainName = $('#request_domainName').val();
