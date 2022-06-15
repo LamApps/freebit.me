@@ -12,6 +12,7 @@
                                     <th>Domain Name</th>
                                     <th>Wallet Address</th>
                                     <th>Requested Date</th>
+                                    <th>Rate</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
@@ -21,6 +22,7 @@
                                     <td>{{$row->domain_name}}.bit</td>
                                     <td>{{$row->wallet_address}}</td>
                                     <td>{{$row->created_at}}</td>
+                                    <td>{{$row->rate>0?$row->rate:""}}</td>
                                     <td>{{$row->status==0?'Queued':($row->status==1?'Pending':'Approved')}}</td>
                                 </tr>
                                 @endforeach
@@ -30,6 +32,7 @@
                                     <th>Domain Name</th>
                                     <th>Wallet Address</th>
                                     <th>Requested Date</th>
+                                    <th>Rate</th>
                                     <th>Status</th>
                                 </tr>
                             </tfoot>
