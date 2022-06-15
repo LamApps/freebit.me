@@ -18,6 +18,7 @@ Route::get('/main', [HomeController::class, "main"])->name("main");
 Route::post('/register_wallet_Address', [HomeController::class, "regist_wallet"])->name("regist_wallet");
 Route::post('/findDomainName', [HomeController::class, "findDomainName"])->name("findDomainName");
 Route::post('/validate_twitter_displayName', [HomeController::class, "validateTwitterName"])->name("validateTwitterName");
+Route::post('/finalization', [HomeController::class, "finalization"])->name("finalization");
 Route::get('/cron', [HomeController::class, "cron_job"]);
 
 Route::group(['middleware' => ['auth']], function(){
