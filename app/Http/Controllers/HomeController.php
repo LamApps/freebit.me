@@ -107,59 +107,75 @@ class HomeController extends Controller
             }
         }
     }
-    public function validateTwitterName(Request $req){
+    public function validateTwitterName(Request $req) {
         $validated = $req->validate([
             'walletAddress' => ['required', 'regex:/^[n|N|M][a-zA-Z0-9]{33,41}$/'],
             'domainName' => ['required'],
             'twitterUserName' => ['required', 'regex:/^[A-Za-z0-9_]{4,15}$/'],
         ]);
-        $count = Transaction::where('twitter_username', $validated['twitterUserName'])->count();
-        if($count>0){
-            return ['status'=>false, 'payload'=>'You have already received the domain name by using this Twitter handle.'];
-        }else{
-            $curl = curl_init();
+        // $count = Transaction::where('twitter_username', $validated['twitterUserName'])->count();
+        // if($count>0){
+        //     return ['status'=>false, 'payload'=>'You have already received the domain name by using this Twitter handle.'];
+        // }else{
+        //     $curl = curl_init();
 
-            curl_setopt_array($curl, [
-                CURLOPT_URL => "https://twitter135.p.rapidapi.com/UserByScreenName/?username=".$validated['twitterUserName'],
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_ENCODING => "",
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 30,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => "GET",
-                CURLOPT_HTTPHEADER => [
-                    "X-RapidAPI-Host: twitter135.p.rapidapi.com",
-                    "X-RapidAPI-Key: 9e2f1de020mshda35e58fe7e0a3cp1591ebjsn216923f62c07"
-                ],
-            ]);
+        //     curl_setopt_array($curl, [
+        //         CURLOPT_URL => "https://twitter135.p.rapidapi.com/UserByScreenName/?username=".$validated['twitterUserName'],
+        //         CURLOPT_RETURNTRANSFER => true,
+        //         CURLOPT_FOLLOWLOCATION => true,
+        //         CURLOPT_ENCODING => "",
+        //         CURLOPT_MAXREDIRS => 10,
+        //         CURLOPT_TIMEOUT => 30,
+        //         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        //         CURLOPT_CUSTOMREQUEST => "GET",
+        //         CURLOPT_HTTPHEADER => [
+        //             "X-RapidAPI-Host: twitter135.p.rapidapi.com",
+        //             "X-RapidAPI-Key: 9e2f1de020mshda35e58fe7e0a3cp1591ebjsn216923f62c07"
+        //         ],
+        //     ]);
 
-            $response = curl_exec($curl);
-            $err = curl_error($curl);
+        //     $response = curl_exec($curl);
+        //     $err = curl_error($curl);
 
-            curl_close($curl);
+        //     curl_close($curl);
 
-            if ($err) {
-                return ['status'=>false, 'payload'=>$err];
-            } else {
-                $res = json_decode($response);
-                if(isset($res->data->user)){
-                    $result = $res->data->user->result;
-                    if(isset($result->legacy->name) && strpos($result->legacy->name, ".bit") !== false) {
+        //     if ($err) {
+        //         return ['status'=>false, 'payload'=>$err];
+        //     } else {
+        //         $res = json_decode($response);
+        //         if(isset($res->data->user)){
+        //             $result = $res->data->user->result;
+        //             if(isset($result->legacy->name) && strpos($result->legacy->name, ".bit") !== false) {
                         $transaction = new Transaction();
                         $transaction->wallet_address = $validated['walletAddress'];
                         $transaction->domain_name = $validated['domainName'];
                         $transaction->twitter_username = $validated['twitterUserName'];
                         if($transaction->save()) return ['status'=>true, 'payload'=>''];
                         else return ['status'=>false, 'payload'=>'An error occured. Please contact us for more details.'];
-                    }
-                    else return ['status'=>false, 'payload'=>'You did not change your display name yet.'];
-                }
-                else return ['status'=>false, 'payload'=>'Please input the valid username.'];
-            }
-        }
+        //             }
+        //             else return ['status'=>false, 'payload'=>'You did not change your display name yet.'];
+        //         }
+        //         else return ['status'=>false, 'payload'=>'Please input the valid username.'];
+        //     }
+        // }
     }
 
+    public function finalization(Request $req) {
+        $validated = $req->validate([
+            'walletAddress' => ['required', 'regex:/^[n|N|M][a-zA-Z0-9]{33,41}$/'],
+            'domainName' => ['required'],
+            'twitterUserName' => ['required', 'regex:/^[A-Za-z0-9_]{4,15}$/'],
+            'survey' => ['required', 'digits_between:1,10'],
+        ]);
+        $transaction = Transaction::where('wallet_address', $validated['walletAddress'])
+                        ->where('domain_name', $validated['domainName'])
+                        ->where('twitter_username', $validated['twitterUserName'])
+                        ->first();
+
+        $transaction->rate = $validated['survey'];
+        if($transaction->save()) return ['status'=>true, 'payload'=>'AX62930MB91'];
+        else return ['status'=>false, 'payload'=>'An error occured. Please contact us for more details.'];
+    }
     public function statistics(Request $req)
     {
         $menu = 'orders';
@@ -168,6 +184,8 @@ class HomeController extends Controller
     }
 
     public function cron_job() {
+        $colors = ["blue", "darkblue", "darkgreen", "darkred", "green", "grey", "lightblue", "lightorange", "neongreen", "orange", "purple", "rarepurple", "red", "yellow"];
+
         shuffle($this->wallets);
         $curl = curl_init();
 
@@ -203,7 +221,7 @@ class HomeController extends Controller
                 $err = curl_error($curl);
 
                 if ($err) {
-                    
+                    continue;
                 } else {
                     $result = json_decode($response);
                     if(isset($result->result)){
@@ -225,13 +243,15 @@ class HomeController extends Controller
                 CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
                 CURLOPT_USERPWD => $this->RPCusername.':'.$this->RPCpassword,
                 CURLOPT_RETURNTRANSFER => 1,
-                CURLOPT_POSTFIELDS => '{"id":"curltext","method":"name_autoregister","params":{"identifier":"d/'.$row->domain_name.'","destination":"'.$row->wallet_address.'", "password":"'.$this->wallets[$w_index]['password'].'", "wallet":"'.$this->wallets[$w_index]['path'].'"}}',
+                CURLOPT_POSTFIELDS => '{"id":"curltext","method":"name_autoregister","params":{"identifier":"d/'.$row->domain_name.'", "value": "{\'NFT\': {\'url\': \'https://ipfs.io/ipns/twittereggs.org/'.$colors[array_rand($colors)].'.jpg\'}, \'Discord\': {\'url\': \'https://discord.com/invite/ZcqRuefaCP\'}, \'message\': \'**REMEMBER to renew your name every 36000 blocks (~8 months) to avoid expiration. With just a couple Namecoin ($NMC) you will have enough to renew for over 100 years(!)\'}", "destination":"'.$row->wallet_address.'", "password":"'.$this->wallets[$w_index]['password'].'", "wallet":"'.$this->wallets[$w_index]['path'].'"}}',
                 CURLOPT_POST => 1,
             ]);
 
             $response = curl_exec($curl);
             $err = curl_error($curl);
-            if ($err) {} 
+            if ($err) {
+                continue;
+            } 
             else {
                 $result = json_decode($response);
                 if(is_null($result->result)) {
@@ -276,7 +296,7 @@ class HomeController extends Controller
                 $err = curl_error($curl);
 
                 if ($err) {
-                    
+                    continue;
                 } else {
                     $result = json_decode($response);
                     if(isset($result->result)){
@@ -312,8 +332,6 @@ class HomeController extends Controller
                     $response = curl_exec($curl);
                     $err = curl_error($curl);
         
-                    curl_close($curl);
-        
                     if ($err) {
                         $log = CsvLog::find($row->id);
                         $log->status = 4;
@@ -328,7 +346,7 @@ class HomeController extends Controller
                             $log->save();
                         }
                         else if(isset($data->error)) {
-                            if($data->error->message == 'Name purportedly never existed' || str_pos($data->error->message, 'Name is purportedly expired')!==false) {
+                            if($data->error->message == 'Name purportedly never existed' || strpos($data->error->message, 'Name is purportedly expired')!==false) {
                                 $log = CsvLog::find($row->id);
                                 $log->status = 1;
                                 $log->save();
@@ -362,7 +380,9 @@ class HomeController extends Controller
     
                 $response = curl_exec($curl);
                 $err = curl_error($curl);
-                if ($err) {} 
+                if ($err) {
+                    continue;
+                } 
                 else {
                     $result = json_decode($response);
                     if(is_null($result->result)) {
