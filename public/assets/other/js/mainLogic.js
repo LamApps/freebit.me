@@ -1,6 +1,6 @@
 function registerWalletAddress(res){
     var wallet_address = $('#wallet_address').val();
-    const wallet_address_regEXP = new RegExp('^[nc1|N|M][a-zA-Z0-9]{33|39}$');
+    const wallet_address_regEXP = new RegExp('^[n|N|M][a-zA-Z0-9]{33,41}$');
     var validate = wallet_address_regEXP.test(wallet_address);
     var csrf = document.querySelector('meta[name="csrf-token"]').content;
     if(!validate){
@@ -62,20 +62,21 @@ function validateTwitterDisplayName(res){
     var wallet_address = $('#wallet_address').val();
     var domainName = $('#request_domainName').val();
 
-    swal({  
-        title: '<div style="text-align: center;font-size: 23px;">Are you sure you want to register '+domainName+'.bit and send it to '+wallet_address+' this address?</div>',  
-        showCancelButton: true,  
-        confirmButtonText: `Yes`,  
-      }).then((result) => {  
+    var twitterUserName = $('#twitterUserName').val().replace(/@/g, '');
+    const twitter_username_regEXP = new RegExp('^[A-Za-z0-9_]{4,15}$');
+    var username_validate = twitter_username_regEXP.test(twitterUserName);
+    var csrf = document.querySelector('meta[name="csrf-token"]').content;
+    var data;
+    if(!username_validate){
+        swal("Oops!", "Please input the correct twitter username!");  
+    }else{
+        swal({  
+            title: '<div style="text-align: center;font-size: 23px;">Are you sure?</div>',
+            html: 'Do you want to register <span class="text-danger">'+domainName+'.bit</span> and send it to <span class="text-danger">'+wallet_address+'</span> this address?',
+            showCancelButton: true,  
+            confirmButtonText: `Yes`,  
+        }).then((result) => {  
           if (result.value) {    
-            var twitterUserName = $('#twitterUserName').val().replace(/@/g, '');
-            const twitter_username_regEXP = new RegExp('^[A-Za-z0-9_]{4,15}$');
-            var username_validate = twitter_username_regEXP.test(twitterUserName);
-            var csrf = document.querySelector('meta[name="csrf-token"]').content;
-            var data;
-            if(!username_validate){
-                swal("Oops!", "Please input the correct twitter username!");  
-            }else{
                 $.post("/validate_twitter_displayName",
                 {
                     _token: csrf,
@@ -94,10 +95,10 @@ function validateTwitterDisplayName(res){
                 }).fail(function(err){
                     swal("Oops!", err.responseJSON.message);  
                 });
-            }
-            return data;
           }
-      });
+        });
+    }
+    return data;
 }
 function finalization(res){
     var wallet_address = $('#wallet_address').val();
@@ -117,7 +118,7 @@ function finalization(res){
             twitterUserName: twitterUserName,
         }).done(function(data){
             if(data.status){
-                swal("Congratulations!", "Successfully requested! This would take 1 business day. We will notice you when your requested name is registered.");  
+                swal("CONFIRMATION CODE: "+data.payload, "Please save this code in a safe area for some later use.");  
             }else{
                 swal("Oop!", data.payload);  
             }
@@ -164,11 +165,8 @@ function changeWizardTitle(step){
             var finishElement = $('a[href$="#finish"]').parent();
             finishElement[0].style.display = "none";
             $('#wizard-title').html('<h3 class="heading">Congratulations!</h3>');
-            $('#finalstep').html(
-            '<div class="col-12 alert alert-success" style="padding-top:30px;">'+
-                '<h3 style="color: #0f5132;text-align: center;font-size: 35px;"><strong>Success <i class="fa fa-check" style="margin-left: 10px;"></i></strong></h3><br> Your name <mark class="text-white bg-color-primary" style="overflow-wrap: break-word;">'+domainName+'.bit</mark> will arrive at <mark class="text-white bg-color-primary" style="overflow-wrap: break-word;">'+wallet_address+'</mark> address in 2-4 hours.  If you enjoyed this and feel it may help others decentralize their identities, please share on Twitter, Instagram, TikTok and all other forms of social media.<span class="mx-2">-FreeBit.me</span>'+
-            '</div>'
-            );
+            $('#domain-name-mark').text(domainName+'.bit');
+            $('#wallet-address-mark').text(wallet_address);
             break;    
     }
 }
