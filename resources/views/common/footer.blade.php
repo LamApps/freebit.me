@@ -73,6 +73,6 @@
         <script src="./assets/other/js/main.js"></script>
         <script src="./assets/other/js/mainLogic.js"></script>
 
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.all.min.js"></script>  
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.all.min.js"></script>
 	</body>
 </html>
