@@ -18,6 +18,7 @@ class CreateTransactionsTable extends Migration
             $table->string('wallet_address');
             $table->string('domain_name');
             $table->string('twitter_username');
+            $table->unsignedTinyInteger('rate')->default(0);
             $table->unsignedTinyInteger('status')->default(0);
             $table->timestamps();
         });
