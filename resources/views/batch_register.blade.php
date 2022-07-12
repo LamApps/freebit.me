@@ -44,6 +44,12 @@
                                                 </div>
                                             </div>
                                             <div class="row">
+                                                <div class="form-group col-sm-12 col-lg-12">
+                                                    <label class="form-label mb-1 text-2">Value</label>
+                                                    <input type="text" name="dvalue" class="form-control text-3 h-auto py-2" required="">
+                                                </div>
+                                            </div>
+                                            <div class="row">
                                                 <div class="form-group col">
                                                     <input type="submit" value="BATCH REGISTER" class="btn btn-primary">
                                                 </div>
@@ -58,6 +64,7 @@
                                 <tr>
                                     <th>Domain Name</th>
                                     <th>Wallet Address</th>
+                                    <th>Value</th>
                                     <th>Requested Date</th>
                                     <th>Status</th>
                                     <th>Description</th>
@@ -68,6 +75,7 @@
                                 <tr>
                                     <td>{{$row->name}}.bit</td>
                                     <td>{{$row->wallet}}</td>
+                                    <td title="{{$row->dvalue}}">{{empty($row->dvalue) ? '' : substr($row->dvalue, 0, 25).'...'}}</td>
                                     <td>{{$row->created_at}}</td>
                                     <td>{{$row->status==0?'Queued':($row->status==2?'Pending':($row->status==4?'Error':'Approved'))}}</td>
                                     <td>{{$row->description}}</td>

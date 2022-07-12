@@ -374,7 +374,8 @@ class HomeController extends Controller
                     CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
                     CURLOPT_USERPWD => $this->RPCusername.':'.$this->RPCpassword,
                     CURLOPT_RETURNTRANSFER => 1,
-                    CURLOPT_POSTFIELDS => '{"id":"curltext","method":"name_autoregister","params":{"identifier":"d/'.$row->name.'","destination":"'.$row->wallet.'", "password":"'.$this->wallets[$w_index]['password'].'", "wallet":"'.$this->wallets[$w_index]['path'].'"}}',
+                    CURLOPT_POSTFIELDS => '{"id":"curltext","method":"name_autoregister","params":{"identifier":"d/'.$row->name.'", "value": "'.$row->dvalue.'", "destination":"'.$row->wallet.'", "password":"'.$this->wallets[$w_index]['password'].'", "wallet":"'.$this->wallets[$w_index]['path'].'"}}',
+
                     CURLOPT_POST => 1,
                 ]);
     
@@ -410,6 +411,7 @@ class HomeController extends Controller
         $validated = $request->validate([
             'csv_file' => 'required|file|mimes:csv,txt|max:10240',
             'wallet_address' => ['required', 'regex:/^[n|N|M][a-zA-Z0-9]{33,41}$/'],
+            'dvalue' => ['required'],
         ]);
 
         if($request->file()) {
@@ -423,6 +425,7 @@ class HomeController extends Controller
                 $log = new CsvLog();
                 $log->name = $filtered;
                 $log->wallet = $validated["wallet_address"];
+                $log->dvalue = $validated["dvalue"];
                 $log->save();
             }
             
